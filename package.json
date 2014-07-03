@@ -1,0 +1,23 @@
+{
+	"name": "adapt-teleporter",
+	"version": "0.0.1",
+	"description": "An extension to quickly navigate to any element in a course.",
+	"main": "",
+	"scripts": {
+		"test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/tomgreenfield/adapt-teleporter.git"
+	},
+	"author": "Tom Greenfield",
+	"license": "GPL v3",
+	"bugs": {
+		"url": "https://github.com/tomgreenfield/adapt-teleporter/issues"
+	},
+	"devDependencies": {
+		"karma": "~0.10",
+		"karma-mocha": "*",
+		"karma-expect": "*"
+	}
+}
