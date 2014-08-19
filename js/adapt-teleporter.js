@@ -46,9 +46,9 @@ define(function(require) {
 					})($(this).val());
 
 					if (validElement) {
-						$("img", $el).addClass("valid-element");
+						$el.addClass("valid-element");
 					} else {
-						$("img", $el).removeClass("valid-element");
+						$el.removeClass("valid-element");
 					}
 
 					if (event.which == 13) {
@@ -81,7 +81,7 @@ define(function(require) {
 			if (event.which == 27) {
 				$(document).off("keyup", hideTeleporter).on("keyup", checkKeys);
 				$("input", $el).off("keyup").val("");
-				$("img", $el).removeClass("valid-element");
+				$el.removeClass("valid-element");
 				$el.fadeOut(200);
 			}
 		}
@@ -89,11 +89,10 @@ define(function(require) {
 	}
 
 	function checkZIndex() {
-		var ignore = $el.selector + ", .loading";
 		var topZIndex = 0;
 		var zIndex = parseInt($el.css("z-index"), 10);
 
-		$("body").find("*").not(ignore).each(function() {
+		$("body").find("*").not($el.selector).each(function() {
 			var i = parseInt($(this).css("z-index"), 10);
 			if (i > topZIndex) topZIndex = i;
 		});

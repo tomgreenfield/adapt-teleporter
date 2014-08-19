@@ -1,6 +1,6 @@
 {
 	"name": "adapt-teleporter",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"description": "An extension to quickly navigate to any element in a course.",
 	"main": "",
 	"scripts": {
