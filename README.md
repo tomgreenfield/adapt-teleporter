@@ -1,10 +1,11 @@
 # adapt-teleporter
 
-An extension to quickly navigate to any element in a course.
+An extension to quickly navigate to an element in a course.
 
 ## Installation
 
-Simply copy the extension folder into the *src > extensions* directory and run an appropriate Grunt task.
+* With [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run `adapt install teleporter`. Alternatively, download the ZIP and extract into the src > extensions directory.
+* Run an appropriate Grunt task.
 
 ## Usage
 

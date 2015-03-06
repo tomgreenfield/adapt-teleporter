@@ -5,34 +5,46 @@
 	display: none;
 	margin: 10px;
 	border-radius: 5px;
-	line-height: 0px;
+	line-height: normal;
 	box-shadow: 1px 1px 3px #333;
-	background-color: rgba(51, 51, 51, 0.8);
+	background-color: lighten(#333, 20%);
+	background-color: fadeout(#333, 20%);
+	&-inner {
+		margin: 10px;
+		border: 1px solid #666;
+		background-color: #333;
+	}
 	input {
 		border-style: none;
 		background-color: #333;
 		color: #fff;
-		font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-		font-size: 13px;
+		font: 13px "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 		text-align: center;
 		&:focus {
 			outline-style: none;
 		}
+		&::-ms-clear {
+			display: none;
+		}
 	}
 	img {
-		vertical-align: -3px;
+		vertical-align: middle;
+		visibility: hidden;
 		opacity: 0;
-		transition: opacity 0.2s;
+		transition: visibility 0.2s, opacity 0.2s;
 		.valid-element& {
+			visibility: visible;
 			opacity: 1;
 		}
 	}
 }
 
-#teleporter-inner {
-	margin: 10px;
-	border: 1px solid #666;
-	background-color: #333;
+.element-highlight {
+	background-color: #f93;
+}
+
+.element-fade {
+	transition: background-color 1s ease-out;
 }
 
 .teleporter-shake {
@@ -40,14 +52,14 @@
 	animation: teleporter-shake 0.2s;
 }
 
-@keyframes teleporter-shake {
-	0%, 100% { transform: translateX(0); }
-	10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-	20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
 @-webkit-keyframes teleporter-shake {
 	0%, 100% { -webkit-transform: translateX(0); }
 	10%, 30%, 50%, 70%, 90% { -webkit-transform: translateX(-5px); }
 	20%, 40%, 60%, 80% { -webkit-transform: translateX(5px); }
+}
+
+@keyframes teleporter-shake {
+	0%, 100% { transform: translateX(0); }
+	10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+	20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
