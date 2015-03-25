@@ -1,12 +1,12 @@
 {
 	"name": "adapt-teleporter",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "An extension to quickly navigate to any element in a course.",
 	"main": "",
 	"scripts": {},
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/tomgreenfield/adapt-teleporter.git"
+		"url": "https://github.com/tomgreenfield/adapt-teleporter.git"
 	},
 	"author": "Tom Greenfield",
 	"license": "GPL v3",

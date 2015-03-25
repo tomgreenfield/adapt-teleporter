@@ -89,7 +89,7 @@ define(function(require) {
 			$(this).addClass("element-fade").dequeue();
 		}).delay(0).queue(function() {
 			$(this).removeClass("element-highlight").dequeue();
-		}).one("webkitTransitionEnd transitionend", function() {
+		}).one("transitionend", function() {
 			$(this).removeClass("element-fade");
 		});
 	}
