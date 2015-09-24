@@ -102,6 +102,8 @@ define(function(require) {
 	}
 
 	Adapt.on("app:dataReady", function() {
+		var config = Adapt.config.get('_teleporter');
+		if (!_.isUndefined(config) && config._isEnabled == false) return;		
 		if (!Adapt.device.touch) {
 			$("body").append(Handlebars.templates["teleporter"]);
 			$el = $("#teleporter");
