@@ -1,14 +1,15 @@
 {
 	"name": "adapt-teleporter",
-	"homepage": "https://github.com/tomgreenfield/adapt-teleporter",
-	"authors": [
-		"Tom Greenfield"
-	],
+	"version": "1.0.0",
 	"description": "An extension to quickly navigate to any element in a course.",
 	"main": "/js/adapt-teleporter.js",
 	"keywords": [
 		"adapt-plugin",
 		"adapt-extension"
 	],
-	"license": "GPLv3"
+	"authors": [
+		"Tom Greenfield"
+	],
+	"license": "GPL-3.0",
+	"homepage": "https://github.com/tomgreenfield/adapt-teleporter"
 }

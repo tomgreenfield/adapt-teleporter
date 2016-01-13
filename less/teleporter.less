@@ -1,4 +1,4 @@
-#teleporter {
+.teleporter {
 	position: fixed;
 	right: 0;
 	bottom: 0;
@@ -9,11 +9,6 @@
 	box-shadow: 1px 1px 3px #333;
 	background-color: lighten(#333, 20%);
 	background-color: fadeout(#333, 20%);
-	&-inner {
-		margin: 10px;
-		border: 1px solid #666;
-		background-color: #333;
-	}
 	input {
 		border-style: none;
 		background-color: #333;
@@ -27,39 +22,28 @@
 			display: none;
 		}
 	}
+}
+
+.teleporter-inner {
+	margin: 10px;
+	border: 1px solid #666;
+	background-color: #333;
+}
+
+.teleporter-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
 	img {
-		vertical-align: middle;
+		position: absolute;
 		visibility: hidden;
 		opacity: 0;
 		transition: visibility 0.2s, opacity 0.2s;
-		.valid-element& {
-			visibility: visible;
-			opacity: 1;
-		}
 	}
-}
-
-.element-highlight {
-	background-color: #f93;
-}
-
-.element-fade {
-	transition: background-color 1s ease-out;
-}
-
-.teleporter-shake {
-	-webkit-animation: teleporter-shake 0.2s;
-	animation: teleporter-shake 0.2s;
-}
-
-@-webkit-keyframes teleporter-shake {
-	0%, 100% { -webkit-transform: translateX(0); }
-	10%, 30%, 50%, 70%, 90% { -webkit-transform: translateX(-5px); }
-	20%, 40%, 60%, 80% { -webkit-transform: translateX(5px); }
-}
-
-@keyframes teleporter-shake {
-	0%, 100% { transform: translateX(0); }
-	10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-	20%, 40%, 60%, 80% { transform: translateX(5px); }
+	.valid-element & .teleporter-accept,
+	.locked-element & .teleporter-delete {
+		visibility: visible;
+		opacity: 1;
+	}
 }

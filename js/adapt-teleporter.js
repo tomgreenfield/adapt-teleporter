@@ -1,44 +1,35 @@
-/*
-* Teleporter
-* License - https://github.com/adaptlearning/adapt_framework/blob/master/LICENSE
-* Maintainers - Tom Greenfield
-*/
+define([ "coreJS/adapt" ], function(Adapt) {
 
-define(function(require) {
-
-	var Adapt = require("coreJS/adapt");
 	var $body = $("body");
-	var $document = $(document);
-	var keys = [];
 	var $el;
 	var $input;
+	var $document = $(document);
+	var keys = [];
 	var validElement;
 
 	function render() {
 		$body.append(Handlebars.templates.teleporter);
-		$el = $("#teleporter");
-		$input = $("input", $el);
-		Adapt.on("menuView:postRender pageView:postRender", function() { checkZIndex(); });
+		$el = $(".teleporter");
+		$input = $el.find("input");
 		$document.on("keyup", checkKeys);
 	}
 
 	function checkKeys(event) {
 		keys.push(event.which);
-		if (keys.toString().indexOf("84,69,76,69") >= 0) {
-			keys = [];
-			$document.off("keyup", checkKeys);
-			checkZIndex();
-			show();
-		}
+
+		if (keys.toString().indexOf("84,69,76,69") === -1) return;
+
+		keys = [];
+		$document.off("keyup", checkKeys);
+		checkZIndex();
+		show();
 	}
 
 	function show() {
-		$el.velocity("fadeIn", {
-			duration: 200,
-			complete: function() {
-				$input.focus().on("keyup", inputOnKeyUp).on("keydown", inputOnKeyDown);
-				$document.on("keyup", hide);
-			}
+		$el.velocity("fadeIn", 200, function() {
+			$input.focus().on({ keyup: inputOnKeyUp, keydown: inputOnKeyDown });
+			$document.on("keyup", hide);
+			Adapt.on("menuView:ready pageView:ready", checkZIndex);
 		});
 	}
 
@@ -47,59 +38,65 @@ define(function(require) {
 	}
 
 	function inputOnKeyDown(event) {
-		if (event.which === 13) {
-			event.preventDefault();
-			validElement ? teleport(this.value, validElement) : shake();
-		}
+		if (event.which !== 13) return;
+
+		event.preventDefault();
+
+		validElement ? teleport(this.value, validElement) : shake();
 	}
 
-	function validate(value) {
-		validElement = Adapt.mapById(value);
+	function validate(id) {
+		validElement = Adapt.mapById(id);
 
-		if (validElement) $el.addClass("valid-element");
-		else $el.removeClass("valid-element");
+		if (validElement) checkVisibility(id);
+		else $el.removeClass("valid-element locked-element");
 	}
 
 	function teleport(id, type) {
-		if (type === "course") {
-			location.assign("#");
-		} else if (type === "contentObjects") {
-			location.assign("#/id/" + id);
-		} else {
-			Adapt.once("page:scrollTo", highlight).navigateToElement("." + id, {
-				offset: { top: -$(".navigation").outerHeight() }
-			}, false);
-		}
+		if (type === "course") location.assign("#");
+		else Adapt.once("page:scrollTo", onScrollTo).navigateToElement("." + id);
+	}
+
+	function onScrollTo(selector) {
+		checkVisibility(selector.slice(1));
+		highlight(selector);
+	}
+
+	function checkVisibility(id) {
+		var isVisible = Adapt.findById(id).get("_isVisible");
+
+		$el
+			.removeClass(isVisible ? "locked-element" : "valid-element")
+			.addClass(isVisible ? "valid-element" : "locked-element");
+	}
+
+	function highlight(selector) {
+		$(selector)
+			.velocity("finish")
+			.velocity({ backgroundColor: "#f93" }, 0)
+			.velocity("reverse", 1000, function() {
+				checkVisibility(selector.slice(1));
+				$input.focus();
+			});
 	}
 
 	function shake() {
-		if ($el.hasClass("teleporter-shake")) $el.removeClass("teleporter-shake");
-
-		$el.addClass("teleporter-shake").one("webkitAnimationEnd animationend", function() {
-			$(this).removeClass("teleporter-shake");
-		});
-	}
-
-	function highlight(element) {
-		var $element = $(element);
-
-		if ($element.hasClass("element-fade")) $element.removeClass("element-fade");
-
-		$element.addClass("element-highlight").delay(0).queue(function() {
-			$(this).addClass("element-fade").dequeue();
-		}).delay(0).queue(function() {
-			$(this).removeClass("element-highlight").dequeue();
-		}).one("transitionend", function() {
-			$(this).removeClass("element-fade");
-		});
+		$el
+			.velocity("stop", true)
+			.velocity({ translateX: -5 }, 20)
+			.velocity({ translateX: 5 }, { duration: 20, loop: 4 })
+			.velocity({ translateX: 0 }, 20);
 	}
 
 	function hide(event) {
-		if (event.which === 27) {
+		if (event.which !== 27) return;
+
+		$el.velocity("fadeOut", 200, function() {
+			$el.removeClass("valid-element locked-element");
 			$input.off("keyup keydown").val("");
 			$document.off("keyup", hide).on("keyup", checkKeys);
-			$el.removeClass("valid-element").velocity("fadeOut", 200);
-		}
+			Adapt.off("menuView:ready pageView:ready", checkZIndex);
+		});
 	}
 
 	function checkZIndex() {
@@ -108,6 +105,7 @@ define(function(require) {
 
 		$body.find("*").not($el.selector).each(function() {
 			var i = parseInt($(this).css("z-index"), 10);
+
 			if (i > topZIndex) topZIndex = i;
 		});
 
