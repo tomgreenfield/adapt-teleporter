@@ -1,17 +1,16 @@
 define([ "coreJS/adapt" ], function(Adapt) {
 
-	var $body = $("body");
+	var $body;
 	var $el;
-	var $input;
-	var $document = $(document);
+	var $document;
 	var keys = [];
+	var $input;
 	var validElement;
 
 	function render() {
-		$body.append(Handlebars.templates.teleporter);
-		$el = $(".teleporter");
-		$input = $el.find("input");
-		$document.on("keyup", checkKeys);
+		$body = $("body");
+		$el = $(Handlebars.templates.teleporter()).appendTo($body);
+		$document = $(document).on("keyup", checkKeys);
 	}
 
 	function checkKeys(event) {
@@ -27,7 +26,10 @@ define([ "coreJS/adapt" ], function(Adapt) {
 
 	function show() {
 		$el.velocity("fadeIn", 200, function() {
-			$input.focus().on({ keyup: inputOnKeyUp, keydown: inputOnKeyDown });
+			$input = $el.find("input").focus().on({
+				keyup: inputOnKeyUp,
+				keydown: inputOnKeyDown
+			});
 			$document.on("keyup", hide);
 			Adapt.on("menuView:ready pageView:ready", checkZIndex);
 		});
@@ -112,6 +114,6 @@ define([ "coreJS/adapt" ], function(Adapt) {
 		if (topZIndex !== 0 && topZIndex >= zIndex) $el.css("z-index", topZIndex + 1);
 	}
 
-	Adapt.on("app:dataReady", function() { if (!Adapt.device.touch) render(); });
+	Adapt.once("app:dataReady", function() { if (!Adapt.device.touch) render(); });
 
 });

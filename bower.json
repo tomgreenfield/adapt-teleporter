@@ -1,7 +1,10 @@
 {
 	"name": "adapt-teleporter",
-	"version": "1.0.0",
-	"description": "An extension to quickly navigate to any element in a course.",
+	"version": "1.0.1",
+	"framework": ">=2",
+	"displayName" : "Teleporter",
+	"extension": "teleporter",
+	"description": "An extension to quickly navigate to any element in a course",
 	"main": "/js/adapt-teleporter.js",
 	"keywords": [
 		"adapt-plugin",
