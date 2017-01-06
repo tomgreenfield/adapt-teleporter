@@ -2,15 +2,27 @@ define([ "coreJS/adapt" ], function(Adapt) {
 
 	var $body;
 	var $el;
+	var ids = [];
 	var $document;
 	var keys = [];
 	var $input;
-	var validElement;
+	var validId;
 
 	function render() {
 		$body = $("body");
 		$el = $(Handlebars.templates.teleporter()).appendTo($body);
+		collateIds();
 		$document = $(document).on("keyup", checkKeys);
+	}
+
+	function collateIds() {
+		ids.push(Adapt.course.get("_id"));
+
+		for (var key in Adapt) {
+			if (Adapt.hasOwnProperty(key)) {
+				ids.push.apply(ids, _.keys(Adapt[key]._byAdaptID));
+			}
+		}
 	}
 
 	function checkKeys(event) {
@@ -27,49 +39,47 @@ define([ "coreJS/adapt" ], function(Adapt) {
 	function show() {
 		$el.velocity("fadeIn", 200, function() {
 			$input = $el.find("input").focus().on({
-				keyup: inputOnKeyUp,
-				keydown: inputOnKeyDown
+				"input propertychange": onInput,
+				keydown: onKeyDown
 			});
 			$document.on("keyup", hide);
 			Adapt.on("menuView:ready pageView:ready", checkZIndex);
 		});
 	}
 
-	function inputOnKeyUp(event) {
-		if (event.which !== 13) validate(this.value);
+	function onInput() {
+		validate(this.value);
 	}
 
-	function inputOnKeyDown(event) {
+	function onKeyDown(event) {
 		if (event.which !== 13) return;
 
 		event.preventDefault();
 
-		validElement ? teleport(this.value, validElement) : shake();
+		validId ? teleport() : shake();
 	}
 
 	function validate(id) {
-		validElement = Adapt.mapById(id);
-
-		if (validElement) checkVisibility(id);
-		else $el.removeClass("valid-element locked-element");
+		validId = _.contains(ids, id) ? id : false;
+		toggleClasses();
 	}
 
-	function teleport(id, type) {
-		if (type === "course") location.assign("#");
-		else Adapt.once("page:scrollTo", onScrollTo).navigateToElement("." + id);
+	function teleport() {
+		if (Adapt.mapById(validId) === "course") location.assign("#");
+		else Adapt.once("page:scrollTo", onScrollTo).navigateToElement("." + validId);
 	}
 
 	function onScrollTo(selector) {
-		checkVisibility(selector.slice(1));
+		toggleClasses();
 		highlight(selector);
 	}
 
-	function checkVisibility(id) {
-		var isVisible = Adapt.findById(id).get("_isVisible");
+	function toggleClasses() {
+		var isVisible = validId && Adapt.findById(validId).get("_isVisible");
 
 		$el
-			.removeClass(isVisible ? "locked-element" : "valid-element")
-			.addClass(isVisible ? "valid-element" : "locked-element");
+			.toggleClass("valid-element", isVisible)
+			.toggleClass("locked-element", validId && !isVisible);
 	}
 
 	function highlight(selector) {
@@ -77,7 +87,7 @@ define([ "coreJS/adapt" ], function(Adapt) {
 			.velocity("finish")
 			.velocity({ backgroundColor: "#f93" }, 0)
 			.velocity("reverse", 1000, function() {
-				checkVisibility(selector.slice(1));
+				toggleClasses();
 				$input.focus();
 			});
 	}
@@ -95,7 +105,7 @@ define([ "coreJS/adapt" ], function(Adapt) {
 
 		$el.velocity("fadeOut", 200, function() {
 			$el.removeClass("valid-element locked-element");
-			$input.off("keyup keydown").val("");
+			$input.off("input propertychange keydown").val("");
 			$document.off("keyup", hide).on("keyup", checkKeys);
 			Adapt.off("menuView:ready pageView:ready", checkZIndex);
 		});
@@ -105,7 +115,7 @@ define([ "coreJS/adapt" ], function(Adapt) {
 		var topZIndex = 0;
 		var zIndex = parseInt($el.css("z-index"), 10) || 0;
 
-		$body.find("*").not($el.selector).each(function() {
+		$body.find("*").not($el).each(function() {
 			var i = parseInt($(this).css("z-index"), 10);
 
 			if (i > topZIndex) topZIndex = i;
